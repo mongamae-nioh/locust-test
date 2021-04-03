@@ -6,7 +6,9 @@ class QuickstartUser(HttpUser):
 
     @task
     def hello_world(self):
-        self.client.get("/")
+        response = self.client.get("/")
+        print(response.status_code)
+        print(response.text)
 
 @events.test_start.add_listener
 def on_test_start(environment, **kwargs):
@@ -15,7 +17,7 @@ def on_test_start(environment, **kwargs):
 @events.test_stop.add_listener
 def on_test_stop(environment, **kwargs):
     print("A new test is ending")
-    
+
 """
     @task(3)
     def view_items(self):
