@@ -1,5 +1,5 @@
 import time
-from locust import HttpUser, task, between
+from locust import HttpUser, task, between, events
 
 class QuickstartUser(HttpUser):
     wait_time = between(1, 2.5)
@@ -8,6 +8,14 @@ class QuickstartUser(HttpUser):
     def hello_world(self):
         self.client.get("/")
 
+@events.test_start.add_listener
+def on_test_start(environment, **kwargs):
+    print("A new test is starting")
+
+@events.test_stop.add_listener
+def on_test_stop(environment, **kwargs):
+    print("A new test is ending")
+    
 """
     @task(3)
     def view_items(self):
