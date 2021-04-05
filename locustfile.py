@@ -1,14 +1,25 @@
 import time
 from locust import HttpUser, task, between, events
 
-class QuickstartUser(HttpUser):
+class WebUser(HttpUser):
+    weight = 3
     wait_time = between(1, 2.5)
 
     @task
     def hello_world(self):
         response = self.client.get("/")
         print(response.status_code)
-        print(response.text)
+#        print(response.text)
+
+class MobileUser(HttpUser):
+    weight = 1
+    wait_time = between(1, 2.5)
+
+    @task
+    def hello_world(self):
+        response = self.client.get("/mobile")
+        print(response.status_code)
+
 
 @events.test_start.add_listener
 def on_test_start(environment, **kwargs):
