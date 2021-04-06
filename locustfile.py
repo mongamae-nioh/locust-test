@@ -1,25 +1,26 @@
 import time
+import json
 from locust import HttpUser, task, between, events
 
-class WebUser(HttpUser):
-    weight = 3
+class QuickstartUser(HttpUser):
     wait_time = between(1, 2.5)
 
-    @task
-    def hello_world(self):
-        response = self.client.get("/")
-        print(response.status_code)
-#        print(response.text)
+    def on_start(self):
+        response = self.client.post("/", json={"email":"******", "password":"******"})
 
-class MobileUser(HttpUser):
-    weight = 1
-    wait_time = between(1, 2.5)
+    @task(3)
+    def home(self):
+        response = self.client.request("GET", "/home")
+        print("Response status code:", response.status_code)
+        print("Response url:", response.url)
 
-    @task
-    def hello_world(self):
-        response = self.client.get("/mobile")
-        print(response.status_code)
+    @task(1)
+    def display_image(self):
+        response = self.client.request("GET", "/image")
+        print("Response status code:", response.status_code)
+        print("Response url:", response.url)
 
+# ここへPOSTなど
 
 @events.test_start.add_listener
 def on_test_start(environment, **kwargs):
@@ -28,14 +29,3 @@ def on_test_start(environment, **kwargs):
 @events.test_stop.add_listener
 def on_test_stop(environment, **kwargs):
     print("A new test is ending")
-
-"""
-    @task(3)
-    def view_items(self):
-        for item_id in range(10):
-            self.client.get(f"/item?id={item_id}", name="/item")
-            time.sleep(1)
-
-    def on_start(self):
-        self.client.post("/login", json={"username":"foo", "password":"bar"})
-"""
